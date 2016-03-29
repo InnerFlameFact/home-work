@@ -23,5 +23,8 @@ public class CalcTest {
 
         sum = Calc.calcSum(true, -1,-2,3,0,5,0,7,8);
         Assert.assertEquals(6, sum);
+
+        sum = Calc.calcSum(true, -1,-2,3,0,5,0,7,10);
+        Assert.assertEquals(8, sum);
     }
 }
