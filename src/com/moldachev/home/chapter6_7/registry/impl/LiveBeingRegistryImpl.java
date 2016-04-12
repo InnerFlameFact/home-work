@@ -4,6 +4,8 @@ import com.moldachev.home.chapter6_7.LiveBeing;
 import com.moldachev.home.chapter6_7.food.Food;
 import com.moldachev.home.chapter6_7.food.FoodSet;
 import com.moldachev.home.chapter6_7.registry.LiveBeingRegistry;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -56,7 +58,7 @@ public class LiveBeingRegistryImpl<T extends LiveBeing> implements LiveBeingRegi
                 Food stock = entity.eatNormally(food);
                 if (foodMap.get(stock.getName()) != null) {
                     if (foodMap.get(stock.getName()).getQuantity() > stock.getQuantity()) {
-                        foodMap.replace(stock.getName(), stock);
+                        foodMap.put(stock.getName(), stock);
                     }
                 } else {
                     foodMap.put(stock.getName(), stock);
@@ -64,10 +66,10 @@ public class LiveBeingRegistryImpl<T extends LiveBeing> implements LiveBeingRegi
             }
         }
 
-        return FoodSet.of(foodMap.values().stream().collect(Collectors.toList()));
+        return new FoodSet(new ArrayList<>(foodMap.values()));
     }
 
-    public static LiveBeingRegistryImpl<LiveBeing> of(LiveBeing... beings) {
+    public static <T extends LiveBeing>  LiveBeingRegistryImpl<T> of(T... beings) {
         return new LiveBeingRegistryImpl<>(beings);
     }
 
@@ -76,5 +78,25 @@ public class LiveBeingRegistryImpl<T extends LiveBeing> implements LiveBeingRegi
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("registryList", registryList)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LiveBeingRegistryImpl<?> that = (LiveBeingRegistryImpl<?>) o;
+
+        return new EqualsBuilder()
+                .append(getRegistryList(), that.getRegistryList())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(getRegistryList())
+                .toHashCode();
     }
 }

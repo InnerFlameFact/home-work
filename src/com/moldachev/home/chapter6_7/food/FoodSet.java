@@ -20,13 +20,8 @@ public final class FoodSet {
         return ImmutableList.copyOf(foods);
     }
 
-    private FoodSet(List<Food> foods) {
+    public FoodSet(List<Food> foods) {
         this.foods = foods;
-    }
-
-    public static FoodSet of(List<Food> foods) {
-        List<Food> newFoods = new ArrayList<>(foods);
-        return new FoodSet(newFoods);
     }
 
     @Override

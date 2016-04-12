@@ -60,7 +60,7 @@ public class LiveBeingRegistryImplTest {
         foodList.add(Food.of(FoodType.VEGETABLES, "Vegetables", 10));
         foodList.add(Food.of(FoodType.DOG_FOOD, "Dog food", 10));
 
-        FoodSet foodSet = FoodSet.of(foodList);
+        FoodSet foodSet = new FoodSet(foodList);
         FoodSet stock = registry.feedAll(foodSet);
 
         Assert.assertTrue(stock.getFoods().contains(Food.of(FoodType.DOG_FOOD, "Bone", 17)));

@@ -13,14 +13,17 @@ import java.util.Map;
  * @author sergey
  */
 public class DefaultHuman extends LiveBeingImpl implements Human {
+    final Map<FoodType, Integer> acceptableFoodAmount = new HashMap<FoodType, Integer>(){
+        {
+            put(FoodType.MEAT, 1);
+            put(FoodType.VEGETABLES, 2);
+            put(FoodType.MILK, 2);
+            put(FoodType.FRUIT, 1);
+        }
+    };
+
     @Override
     public Map<FoodType, Integer> acceptableFoodAmount() {
-        Map<FoodType, Integer> acceptableFoodAmount = new HashMap<>();
-        acceptableFoodAmount.put(FoodType.MEAT, 1);
-        acceptableFoodAmount.put(FoodType.VEGETABLES, 2);
-        acceptableFoodAmount.put(FoodType.MILK, 2);
-        acceptableFoodAmount.put(FoodType.FRUIT, 1);
-
         return acceptableFoodAmount;
     }
 }

@@ -13,14 +13,18 @@ import java.util.Map;
  * @author sergey
  */
 public class Dog extends LiveBeingImpl implements Animal {
+
+    final Map<FoodType, Integer> acceptableFoodAmount = new HashMap<FoodType, Integer>(){
+        {
+            put(FoodType.BONE, 1);
+            put(FoodType.MEAT, 1);
+            put(FoodType.DOG_FOOD, 3);
+            put(FoodType.MILK, 2);
+        }
+    };
+
     @Override
     public Map<FoodType, Integer> acceptableFoodAmount() {
-        Map<FoodType, Integer> acceptableFoodAmount = new HashMap<>();
-        acceptableFoodAmount.put(FoodType.BONE, 1);
-        acceptableFoodAmount.put(FoodType.MEAT, 1);
-        acceptableFoodAmount.put(FoodType.DOG_FOOD, 3);
-        acceptableFoodAmount.put(FoodType.MILK, 2);
-
         return acceptableFoodAmount;
     }
 }
