@@ -11,45 +11,99 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Created by sergey on 25.03.2016.
  */
 public class LiveBeingRegistryImplTest {
 
-    @Test
-    public void testLiveBeingRegistryImpl() {
-        LiveBeing human = new DefaultHuman();
+    public LiveBeing getDog(){
         LiveBeing dog = new Dog();
-
-        Map<FoodType, Integer> eatingHumanFood = new HashMap<>();
-        eatingHumanFood.put(FoodType.HUMAN_FOOD, 2);
-
-        Map<FoodType, Integer> eatingDogFood = new HashMap<>();
-        eatingDogFood.put(FoodType.DOG_FOOD, 2);
-
-        human.setName("Sergey");
-        human.setBirthDate(LocalDate.of(1994, 8, 19));
-        human.setEatingFood(eatingHumanFood);
-
         dog.setName("Archi");
         dog.setBirthDate(LocalDate.of(2010, 4, 11));
-        dog.setEatingFood(eatingDogFood);
 
-        LiveBeingRegistry<LiveBeing> registry = new LiveBeingRegistryImpl<>(human, dog);
+        return dog;
+    }
+
+    public LiveBeing getHuman() {
+        LiveBeing human = new DefaultHuman();
+        human.setName("Sergey");
+        human.setBirthDate(LocalDate.of(1994, 8, 19));
+
+        return human;
+    }
+
+    public LiveBeing getAnotherHuman() {
+        LiveBeing anotherHuman = new DefaultHuman();
+        anotherHuman.setName("Alexandr");
+        anotherHuman.setBirthDate(LocalDate.of(1994, 8, 19));
+
+        return anotherHuman;
+    }
+
+    public LiveBeingRegistry<LiveBeing> getRegistry(){
+        LiveBeing human = getHuman();
+        LiveBeing dog = getDog();
+
+        return LiveBeingRegistryImpl.of(human, dog);
+    }
+
+    @Test
+    public void testFeedAll() {
+
+        LiveBeingRegistry<LiveBeing> registry = getRegistry();
 
         List<Food> foodList = new ArrayList<>();
-        foodList.add(Food.factoryMethod(FoodType.DOG_FOOD, "Bone", 20));
-        foodList.add(Food.factoryMethod(FoodType.HUMAN_FOOD, "Soup", 10));
-        foodList.add(Food.factoryMethod(FoodType.HUMAN_FOOD, "Vegetables", 10));
-        foodList.add(Food.factoryMethod(FoodType.DOG_FOOD, "Dog food", 10));
+        foodList.add(Food.of(FoodType.DOG_FOOD, "Bone", 20));
+        foodList.add(Food.of(FoodType.VEGETABLES, "Vegetables", 10));
+        foodList.add(Food.of(FoodType.DOG_FOOD, "Dog food", 10));
 
-        FoodSet foodSet = FoodSet.factoryMethod(foodList);
+        FoodSet foodSet = FoodSet.of(foodList);
         FoodSet stock = registry.feedAll(foodSet);
-        System.out.println(stock);
+
+        Assert.assertTrue(stock.getFoods().contains(Food.of(FoodType.DOG_FOOD, "Bone", 17)));
+        Assert.assertTrue(stock.getFoods().contains(Food.of(FoodType.VEGETABLES, "Vegetables", 8)));
+        Assert.assertTrue(stock.getFoods().contains(Food.of(FoodType.DOG_FOOD, "Dog food", 7)));
+    }
+
+    @Test
+    public void testRemove() {
+        LiveBeing dog = getDog();
+        LiveBeing human = getHuman();
+        LiveBeingRegistry<LiveBeing> registry = getRegistry();
+
+        Assert.assertTrue(registry.remove(dog,human));
+    }
+
+    @Test
+    public void testFindBy() {
+        LiveBeing human = getHuman();
+        LiveBeingRegistry<LiveBeing> registry = getRegistry();
+        Predicate<LiveBeing> predicate = p -> p.getName().equals(Optional.of("Sergey"));
+        Assert.assertEquals(1, registry.findBy(predicate).size());
+        registry.add(human);
+        Assert.assertEquals(2, registry.findBy(predicate).size());
+    }
+
+    @Test
+    public void testContains () {
+        LiveBeing dog = getDog();
+        LiveBeing human = getHuman();
+        LiveBeing anotherHuman = getAnotherHuman();
+        LiveBeingRegistry<LiveBeing> registry = getRegistry();
+
+        Assert.assertTrue(registry.contains(dog));
+        Assert.assertTrue(registry.contains(human));
+        Assert.assertFalse(registry.contains(anotherHuman));
+    }
+
+    @Test
+    public void testAdd () {
+        LiveBeing human = getAnotherHuman();
+        LiveBeingRegistry<LiveBeing> registry = getRegistry();
+        registry.add(human);
+        Assert.assertEquals(3, registry.getRegistryList().size());
     }
 }

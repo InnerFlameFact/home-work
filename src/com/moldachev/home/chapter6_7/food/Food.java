@@ -1,5 +1,9 @@
 package com.moldachev.home.chapter6_7.food;
 
+import com.google.common.base.Objects;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * Created: 06.04.2016
  *
@@ -28,17 +32,31 @@ public final class Food {
         return quantity;
     }
 
-    public static Food factoryMethod(FoodType type, String name, int quantity) {
+    public static Food of(FoodType type, String name, int quantity) {
         return new Food(type, name, quantity);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Food{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", quantity=").append(quantity);
-        sb.append(", type=").append(type);
-        sb.append('}');
-        return sb.toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", name)
+                .append("quantity", quantity)
+                .append("type", type)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Food food = (Food) o;
+        return getQuantity() == food.getQuantity() &&
+                Objects.equal(getName(), food.getName()) &&
+                getType() == food.getType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getQuantity(), getType());
     }
 }

@@ -1,7 +1,10 @@
 package com.moldachev.home.chapter6_7;
 
+import com.google.common.base.Objects;
 import com.moldachev.home.chapter6_7.food.Food;
 import com.moldachev.home.chapter6_7.food.FoodType;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -16,18 +19,20 @@ public abstract class LiveBeingImpl implements LiveBeing {
     protected LocalDate birthDate;
     protected Optional<LocalDate> deathDate;
     protected Optional<String> name;
-    protected Map<FoodType, Integer> eatingFood;
 
-    abstract public boolean acceptsFood(Food food);
+    @Override
+    public boolean acceptsFood(Food food) {
+        Map<FoodType, Integer> eatingFood = acceptableFoodAmount();
+        return eatingFood != null && eatingFood.get(food.getType()) != null;
+    }
 
     @Override
     public Food eatNormally(Food food) {
         Food stockFood = food;
         if (acceptsFood(food)) {
-            // Не знаю, практикуется ли это, но вроде как не должно быть NpE, так как проверили выше с помощью acceptsFood
-            Integer eatQuantity = getEatingFood().get(food.getType());
+            Integer eatQuantity = acceptableFoodAmount().get(food.getType());
             Integer stockQuantity = (food.getQuantity() - eatQuantity > 0) ? food.getQuantity() - eatQuantity : 0;
-            stockFood = Food.factoryMethod(food.getType(), food.getName(), stockQuantity);
+            stockFood = Food.of(food.getType(), food.getName(), stockQuantity);
             System.out.println("Eating: " + food.getName() + ", stock: " + stockQuantity);
         }
 
@@ -65,14 +70,26 @@ public abstract class LiveBeingImpl implements LiveBeing {
     }
 
     @Override
-    public Map<FoodType, Integer> getEatingFood() {
-        return eatingFood;
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("birthDate", birthDate)
+                .append("deathDate", deathDate)
+                .append("name", name)
+                .toString();
     }
 
     @Override
-    public void setEatingFood(Map<FoodType, Integer> eatingFood) {
-        this.eatingFood = eatingFood;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LiveBeingImpl liveBeing = (LiveBeingImpl) o;
+        return Objects.equal(getBirthDate(), liveBeing.getBirthDate()) &&
+                Objects.equal(getDeathDate(), liveBeing.getDeathDate()) &&
+                Objects.equal(getName(), liveBeing.getName());
     }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getBirthDate(), getDeathDate(), getName());
+    }
 }

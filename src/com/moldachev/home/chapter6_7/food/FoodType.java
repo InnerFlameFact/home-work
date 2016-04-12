@@ -6,6 +6,10 @@ package com.moldachev.home.chapter6_7.food;
  * @author sergey
  */
 public enum FoodType {
-    DOG_FOOD,
-    HUMAN_FOOD
+    VEGETABLES,
+    MEAT,
+    BONE,
+    FRUIT,
+    MILK,
+    DOG_FOOD
 }

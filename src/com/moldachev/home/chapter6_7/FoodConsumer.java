@@ -9,5 +9,6 @@ import com.moldachev.home.chapter6_7.food.Food;
  */
 public interface FoodConsumer {
     boolean acceptsFood(Food food);
+
     Food eatNormally(Food food);
 }

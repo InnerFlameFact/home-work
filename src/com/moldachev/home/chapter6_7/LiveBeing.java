@@ -24,7 +24,5 @@ public interface LiveBeing extends FoodConsumer {
 
     void setName(String name);
 
-    Map<FoodType, Integer> getEatingFood();
-
-    void setEatingFood(Map<FoodType, Integer> eatingFood);
+    Map<FoodType, Integer> acceptableFoodAmount();
 }
